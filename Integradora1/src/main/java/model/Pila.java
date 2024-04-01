@@ -1,5 +1,7 @@
 package model;
 
+import java.util.ArrayList;
+
 public class Pila<T> implements IPila<T> {
     private Nodo<T> cima;
     private int tamano;
@@ -58,5 +60,15 @@ public class Pila<T> implements IPila<T> {
     @Override
     public int size() {
         return tamano;
+    }
+
+    public ArrayList<T> getItems() {
+        ArrayList<T> items = new ArrayList<>();
+        Nodo<T> actual = cima;
+        while (actual != null) {
+            items.add(actual.dato);
+            actual = actual.siguiente;
+        }
+        return items;
     }
 }

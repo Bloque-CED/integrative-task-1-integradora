@@ -1,5 +1,7 @@
 package model;
 
+import java.util.ArrayList;
+
 public class Cola<T> implements ICola<T> {
     private Nodo<T> frente;
     private Nodo<T> finalCola;
@@ -63,6 +65,16 @@ public class Cola<T> implements ICola<T> {
     @Override
     public int size() {
         return tamaño;
+    }
+
+    public ArrayList<T> getItems() {
+        ArrayList<T> items = new ArrayList<>();
+        Nodo<T> actual = frente;
+        while (actual != null) {
+            items.add(actual.dato);
+            actual = actual.siguiente;
+        }
+        return items;
     }
 }
 

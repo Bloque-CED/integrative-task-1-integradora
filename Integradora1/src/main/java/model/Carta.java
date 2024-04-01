@@ -3,20 +3,23 @@ package model;
 public class Carta {
     private String color;
     private int numero;
-    private String tipo;
+    private String tipoEspecial; // Nuevo atributo para las cartas especiales
 
+    // Constructor para cartas normales
     public Carta(String color, int numero) {
         this.color = color;
         this.numero = numero;
-        this.tipo = null; // Las cartas normales no tienen tipo
+        this.tipoEspecial = null; // Las cartas normales no tienen tipo especial
     }
 
-    public Carta(String tipo) {
+    // Constructor para cartas especiales
+    public Carta(String tipoEspecial) {
         this.color = null;
         this.numero = -1;
-        this.tipo = tipo; // Las cartas especiales tienen tipo
+        this.tipoEspecial = tipoEspecial;
     }
 
+    // Métodos getter para los atributos
     public String getColor() {
         return color;
     }
@@ -25,14 +28,20 @@ public class Carta {
         return numero;
     }
 
-    public String getTipo() {
-        return tipo;
+    public String getTipoEspecial() {
+        return tipoEspecial;
     }
 
+    // Método para determinar si la carta es especial
+    public boolean esEspecial() {
+        return tipoEspecial != null;
+    }
+
+    // Método toString para imprimir la carta
     @Override
     public String toString() {
-        if (tipo != null) {
-            return tipo;
+        if (esEspecial()) {
+            return tipoEspecial;
         } else {
             return color + " " + numero;
         }
