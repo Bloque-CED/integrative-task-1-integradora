@@ -1,7 +1,7 @@
 package model;
 import java.util.Scanner;
 
-public class Jugador<T> {
+public class Jugador<T extends Carta> {
     public String nombre;
     public Cola<T> mano;
 

@@ -2,7 +2,7 @@ package model;
 
 import java.util.ArrayList;
 
-public class Pila<T> implements IPila<T> {
+public class Pila<T> {
     private Nodo<T> cima;
     private int tamano;
 
@@ -21,7 +21,6 @@ public class Pila<T> implements IPila<T> {
         this.tamano = 0;
     }
 
-    @Override
     public void push(T elemento) {
         Nodo<T> nuevoNodo = new Nodo<>(elemento);
         if (cima == null) {
@@ -33,7 +32,6 @@ public class Pila<T> implements IPila<T> {
         tamano++;
     }
 
-    @Override
     public T pop() {
         if (isEmpty()) {
             return null;
@@ -44,7 +42,6 @@ public class Pila<T> implements IPila<T> {
         return datoEliminado;
     }
 
-    @Override
     public T peek() {
         if (isEmpty()) {
             return null;
@@ -52,12 +49,10 @@ public class Pila<T> implements IPila<T> {
         return cima.dato;
     }
 
-    @Override
     public boolean isEmpty() {
         return cima == null;
     }
 
-    @Override
     public int size() {
         return tamano;
     }
@@ -72,3 +67,4 @@ public class Pila<T> implements IPila<T> {
         return items;
     }
 }
+

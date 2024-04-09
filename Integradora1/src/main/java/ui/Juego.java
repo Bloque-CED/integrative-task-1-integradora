@@ -7,20 +7,20 @@ import java.util.Scanner;
 
 public class Juego {
     private ArrayList<Cola<Carta>> mazosJugadores;
-    private Mazo<Carta> mazo;
+    private Mazo<Carta> mazo; // Cambio de tipo aquí
     private Mazo<Carta> mazoDescarte;
     private ArrayList<Jugador> jugadores;
     private Carta cartaInicial;
     private Jugador jugadorActual;
 
     public Juego(int numJugadores) {
-        mazosJugadores = new ArrayList<>(); // Cambio en la inicialización
-        mazoDescarte = new Mazo<>(new Pila<Carta>());
+        mazo = new Mazo<>(new Pila<>());
+        mazoDescarte = new Mazo<>(new Pila<>());
         jugadores = new ArrayList<>();
+        mazosJugadores = new ArrayList<>(); // Inicializar la lista de mazos de jugadores
 
-        // Mensaje de depuración para verificar la inicialización de mazo
         System.out.println("Inicializando mazo...");
-        mazo = crearBaraja(); // Inicializar el mazo
+        crearBaraja(mazo);
         if (mazo == null) {
             System.out.println("¡Error! El mazo es null.");
         } else {
@@ -28,53 +28,84 @@ public class Juego {
         }
 
         for (int i = 0; i < numJugadores; i++) {
-            Cola<Carta> mazoJugador = new Cola<>(); // Eliminar el tipo genérico adicional
-            mazosJugadores.add(mazoJugador); // Agrega el mazo al arreglo de mazos de jugadores
-            jugadores.add(new Jugador("Jugador " + (i + 1), mazoJugador)); // Asigna el mazo al jugador
+            Cola<Carta> mazoJugador = new Cola<>();
+            Jugador<Carta> jugador = new Jugador<>("Jugador " + (i + 1), mazoJugador);
+            jugadores.add(jugador);
+            mazosJugadores.add(mazoJugador); // Agregar el mazo del jugador a la lista de mazos de jugadores
         }
-        cartaInicial = mazo.robarCarta(); // Colocar la carta inicial en el montón de descarte
+        cartaInicial = mazo.robarCarta();
         mazoDescarte.descartarCarta(cartaInicial);
-        jugadorActual = jugadores.get(0); // Empezar con el primer jugador
+        jugadorActual = jugadores.get(0);
     }
 
 
-    private Pila<Carta> crearBaraja() {
-        Pila<Carta> baraja = new Pila<>();
-        // Agregar cartas a la baraja
-        for (int i = 0; i < 4; i++) { // Colores
-            for (int j = 0; j < 10; j++) { // Números
-                baraja.push(new Carta("Rojo", j));
-                baraja.push(new Carta("Verde", j));
-                baraja.push(new Carta("Azul", j));
-                baraja.push(new Carta("Amarillo", j));
+
+
+    private void crearBaraja(Mazo<Carta> baraja) { // Modificación aquí
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 10; j++) {
+                baraja.añadirCarta(new Carta("Rojo", j));
+                baraja.añadirCarta(new Carta("Verde", j));
+                baraja.añadirCarta(new Carta("Azul", j));
+                baraja.añadirCarta(new Carta("Amarillo", j));
             }
-            // Agregar cartas especiales
-            baraja.push(new Carta("Cambio de Color"));
-            baraja.push(new Carta("Roba 2"));
-            baraja.push(new Carta("Revertir"));
-            baraja.push(new Carta("Salto"));
+            baraja.añadirCarta(new Carta("Cambio de Color"));
+            baraja.añadirCarta(new Carta("Roba 2"));
+            baraja.añadirCarta(new Carta("Revertir"));
+            baraja.añadirCarta(new Carta("Salto"));
         }
-        Collections.shuffle(baraja.getItems()); // Mezclar las cartas
-
-        // Mensaje de depuración para verificar si baraja es null
-        if (baraja == null) {
-            System.out.println("¡Error! La baraja es null.");
-        } else {
-            System.out.println("¡La baraja se ha creado correctamente!");
-        }
-
-        return baraja;
+        baraja.rellenarMazo(); // Usamos el método rellenarMazo definido en la clase Mazo
     }
+
 
     public void iniciarJuego() {
+        int numJugadores = jugadores.size();
+        // Se inicializa el mazo solo una vez
+        System.out.println("Inicializando mazo...");
+        crearBaraja(mazo);
+        if (mazo == null) {
+            System.out.println("¡Error! El mazo es null.");
+        } else {
+            System.out.println("¡El mazo se ha inicializado correctamente!");
+        }
+
+        // Se crea el mazo para cada jugador y se le asigna un nombre
+        for (int i = 0; i < numJugadores; i++) {
+            Cola<Carta> mazoJugador = new Cola<>();
+            Jugador<Carta> jugador = new Jugador<>("Jugador " + (i + 1), mazoJugador);
+            jugadores.add(jugador);
+        }
+
+        // Seleccionar una carta aleatoria como carta inicial
+        Random rand = new Random();
+        int cartaInicialIndex = rand.nextInt(mazo.size());
+        cartaInicial = mazo.getItems().get(cartaInicialIndex);
+        mazoDescarte.descartarCarta(cartaInicial);
+        jugadorActual = jugadores.get(0);
+
+        // Mostrar el mazo del jugador actual
+        System.out.println("Cartas en la mano del jugador actual (" + jugadorActual.getNombre() + "):");
+        Cola<Carta> mazoJugadorActual = jugadorActual.getMano();
+        for (Carta carta : mazoJugadorActual.getItems()) {
+            System.out.println(carta);
+        }
+
+        // Mostrar los nombres y mazos de los jugadores
+        System.out.println("Jugadores y sus mazos:");
         for (Jugador jugador : jugadores) {
-            for (int i = 0; i < 7; i++) {
-                jugador.robarCarta(mazo);
+            System.out.println(jugador.getNombre() + ":");
+            Cola<Carta> mazoJugador = jugador.getMano();
+            for (Carta carta : mazoJugador.getItems()) {
+                System.out.println(carta);
             }
         }
-        // Iniciar el turno del primer jugador
+
         turnoJugador();
     }
+
+
+
+
 
     public void turnoJugador() {
         // Mostrar estado actual del juego
@@ -83,8 +114,8 @@ public class Juego {
         System.out.println("Cartas en la mano del jugador:");
 
         // Mostrar el mazo del jugador actual
-        Cola<Carta> mazoJugadorActual = mazosJugadores.get(jugadores.indexOf(jugadorActual));
-        for (Carta carta : mazoJugadorActual.getItems()) { // Utilizar el método getCartas()
+        Cola<Carta> mazoJugadorActual = jugadorActual.getMano();
+        for (Carta carta : mazoJugadorActual.getItems()) {
             System.out.println(carta);
         }
 
@@ -108,13 +139,29 @@ public class Juego {
                     }
                 }
             } else {
-                Carta cartaRobada = (Carta) jugadorActual.robarCarta(mazo);
+                // El jugador decide robar una carta
+                Carta cartaRobada = mazo.getItems().get(new Random().nextInt(mazo.size()));
+
                 System.out.println("El jugador ha robado una carta: " + cartaRobada);
-                if (cartaRobada.getColor().equals(cartaInicial.getColor()) ||
-                        cartaRobada.getNumero() == cartaInicial.getNumero()) {
+                if (cartaRobada != null && cartaRobada.getColor() != null && (cartaRobada.getColor().equals(cartaInicial.getColor()) ||
+                        cartaRobada.getNumero() == cartaInicial.getNumero())) {
                     jugadorActual.jugarCarta(cartaRobada, mazoDescarte);
                     cartaInicial = cartaRobada;
                     cartaJugada = true;
+                } else {
+                    // Preguntar al usuario si desea tirar la carta o mantenerla
+                    System.out.println("¿Deseas tirar la carta? (s/n)");
+                    Scanner scanner = new Scanner(System.in);
+                    String decision = scanner.nextLine();
+                    if (decision.equalsIgnoreCase("s")) {
+                        System.out.println("El jugador ha decidido tirar la carta.");
+                        cartaJugada = true;
+                    } else {
+                        // Agregar la carta al mazo del jugador y pasar al siguiente jugador
+                        jugadorActual.getMano().enqueue(cartaRobada);
+                        jugadorActual = obtenerSiguienteJugador();
+                        cartaJugada = true;
+                    }
                 }
             }
         }
@@ -123,14 +170,27 @@ public class Juego {
         int indiceSiguienteJugador = (jugadores.indexOf(jugadorActual) + 1) % jugadores.size();
         jugadorActual = jugadores.get(indiceSiguienteJugador);
 
-        // Verificar si el jugador actual ha ganado
-        if (verificarVictoria(jugadorActual)) {
-            System.out.println("¡El jugador " + jugadorActual.getNombre() + " ha ganado!");
-        } else {
-            // Continuar con el siguiente turno
-            turnoJugador();
+        // Mostrar el mazo del siguiente jugador
+        System.out.println("Cartas en la mano del siguiente jugador (" + jugadorActual.getNombre() + "):");
+        Cola<Carta> manoSiguienteJugador = jugadorActual.getMano();
+        for (Carta carta : manoSiguienteJugador.getItems()) {
+            System.out.println(carta);
         }
     }
+
+
+    // Método para que el jugador decida si tirar o guardar una carta robada
+    private boolean decidirTirarCarta() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("¿Quieres tirar la carta robada? (s/n)");
+        String decision = scanner.nextLine().trim().toLowerCase();
+        return decision.equals("s");
+    }
+
+
+
+
+
 
     public boolean verificarVictoria(Jugador jugador) {
         return jugador.getMano().isEmpty();
@@ -172,11 +232,11 @@ public class Juego {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("¿Cuántas personas jugarán?");
+        System.out.println("¿Cuántas personas jugarán? (2-10)");
         int numJugadores = scanner.nextInt();
         scanner.nextLine(); // Limpiar el buffer del scanner
 
-        if (numJugadores >= 2) { // Modificación aquí
+        if (numJugadores >= 2 && numJugadores <= 10) {
             Juego juego = new Juego(numJugadores);
 
             for (int i = 0; i < numJugadores; i++) {
@@ -187,9 +247,10 @@ public class Juego {
 
             juego.iniciarJuego();
         } else {
-            System.out.println("No hay suficientes jugadores para iniciar el juego.");
+            System.out.println("Número de jugadores no válido. Debe ser un número entre 2 y 10.");
         }
     }
+
 
     public ArrayList<Jugador> getJugadores() {
         return jugadores;
