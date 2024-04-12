@@ -1,4 +1,5 @@
 package model;
+
 import java.util.Scanner;
 
 public class Jugador<T extends Carta> {
@@ -16,16 +17,13 @@ public class Jugador<T extends Carta> {
         return carta;
     }
 
-    public void jugarCarta(T carta, Mazo<T> mazo) {
-        if (carta instanceof Carta) {
-            Carta cartaJugada = (Carta) carta;
-            if (cartaJugada.getColor().equals(((Carta) mazo.robarCarta()).getColor()) ||
-                    cartaJugada.getNumero() == ((Carta) mazo.robarCarta()).getNumero()) {
-                mano.dequeue();
-                mazo.descartarCarta(carta);
-            }
+    public void jugarCarta(T carta, Mazo<Carta> mazoDescarte) {
+        if (!carta.esEspecial()) {
+            mano.remove(carta); // Elimina la carta específica de la mano
+            mazoDescarte.descartarCarta(carta); // Agrega la carta al mazo de descarte
         }
     }
+
 
     public boolean tieneCartas() {
         return !mano.isEmpty();
@@ -47,6 +45,8 @@ public class Jugador<T extends Carta> {
         this.mano = mano;
     }
 
+    // En la clase Jugador
+
     public Carta decisionJugarCarta(Carta cartaInicial) {
         Scanner scanner = new Scanner(System.in);
         Carta cartaSeleccionada = null;
@@ -59,7 +59,7 @@ public class Jugador<T extends Carta> {
         }
 
         if (indiceCarta >= 0 && indiceCarta < mano.size()) {
-            cartaSeleccionada = (Carta) mano.getItems().get(indiceCarta);
+            cartaSeleccionada = mano.dequeue(); // Remueve la carta seleccionada de la mano
         } else {
             System.out.println("Índice de carta no válido. Por favor, ingrese un índice válido.");
             return decisionJugarCarta(cartaInicial); // Pedir al usuario que ingrese un índice válido
@@ -109,4 +109,5 @@ public class Jugador<T extends Carta> {
 
         return cartaSeleccionada;
     }
+
 }

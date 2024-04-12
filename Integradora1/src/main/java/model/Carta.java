@@ -1,5 +1,4 @@
 package model;
-
 public class Carta {
     private String color;
     private int numero;
@@ -12,10 +11,17 @@ public class Carta {
         this.tipoEspecial = null; // Las cartas normales no tienen tipo especial
     }
 
-    // Constructor para cartas especiales
+    // Constructor para cartas especiales con color
+    public Carta(String tipoEspecial, String color) {
+        this.color = color;
+        this.numero = -1; // Indicar que es una carta especial sin número
+        this.tipoEspecial = tipoEspecial;
+    }
+
+    // Constructor para cartas especiales sin color
     public Carta(String tipoEspecial) {
-        this.color = null;
-        this.numero = -1;
+        this.color = null; // Indicar que es una carta especial sin color
+        this.numero = -1; // Indicar que es una carta especial sin número
         this.tipoEspecial = tipoEspecial;
     }
 
@@ -41,10 +47,13 @@ public class Carta {
     @Override
     public String toString() {
         if (esEspecial()) {
-            return tipoEspecial;
+            if (color != null) {
+                return tipoEspecial + " (" + color + ")";
+            } else {
+                return tipoEspecial;
+            }
         } else {
             return color + " " + numero;
         }
     }
 }
-

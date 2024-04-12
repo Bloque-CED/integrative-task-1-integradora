@@ -35,6 +35,35 @@ public class Cola<T> implements ICola<T> {
         tamaño++;
     }
 
+    public void remove(T elemento) {
+        if (isEmpty()) {
+            return;
+        }
+
+        Nodo<T> previo = null;
+        Nodo<T> actual = frente;
+
+        while (actual != null && !actual.dato.equals(elemento)) {
+            previo = actual;
+            actual = actual.siguiente;
+        }
+
+        if (actual != null) {
+            if (previo != null) {
+                previo.siguiente = actual.siguiente;
+            } else {
+                frente = actual.siguiente;
+            }
+
+            if (actual == finalCola) {
+                finalCola = previo;
+            }
+
+            tamaño--;
+        }
+    }
+
+
     @Override
     public T dequeue() {
         if (isEmpty()) {
