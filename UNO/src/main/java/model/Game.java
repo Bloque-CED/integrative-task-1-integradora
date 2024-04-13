@@ -2,7 +2,7 @@ package model;
 
 import java.util.List;
 import java.util.ArrayList;
-
+import model.CardQueue;
 
 public class Game {
     private Deck deck;
@@ -12,24 +12,22 @@ public class Game {
     private boolean gameEnded;
 
     public Game(int numPlayers, CardRegistry cardRegistry) {
-        this.deck = new Deck(cardRegistry);  // Inicializa el mazo de cartas
-        this.discardPile = new DiscardPile(cardRegistry);  // Inicializa el montón de descarte
+        this.deck = new Deck(cardRegistry);
+        this.discardPile = new DiscardPile(cardRegistry);
         this.players = new ArrayList<>();
 
-        // Inicializar jugadores y repartir cartas
         for (int i = 0; i < numPlayers; i++) {
             Player player = new Player("Player " + (i + 1), cardRegistry);
-            for (int j = 0; j < 7; j++) {  // Cada jugador recibe 7 cartas
-                player.drawCard(deck.drawCard());
+            for (int j = 0; j < 7; j++) {
+                player.drawCard(deck.drawCard().dequeueCard()); // Corregido para que utilice CardQueue
             }
             players.add(player);
         }
 
-        // Colocar la carta inicial en el montón de descarte
         Card initialCard = deck.drawCard().dequeueCard();
         discardPile.addCard(initialCard.getId());
 
-        currentPlayerIndex = 0;  // Comienza el juego con el primer jugador
+        currentPlayerIndex = 0;
     }
 
     public void play() {
@@ -39,24 +37,35 @@ public class Game {
             Card topCard = discardPile.topCard();
             boolean hasPlayed = false;
 
-            for (Card card : currentPlayer.getHand()) {
-                if (matches(topCard, card)) {
-                    currentPlayer.playCard(card.getId(), discardPile);
-                    System.out.println(currentPlayer.getName() + " plays " + card);
-                    hasPlayed = true;
-                    break;
+            // Iterar sobre las colas de cartas en la mano del jugador
+            for (CardQueue cardQueue : currentPlayer.getHand()) {
+                if (!cardQueue.isEmpty()) {
+                    Card card = cardQueue.dequeueCard(); // Obtener la carta de la cola
+                    if (matches(topCard, card)) {
+                        currentPlayer.playCard(card.getId(), discardPile);
+                        System.out.println(currentPlayer.getName() + " plays " + card);
+                        hasPlayed = true;
+                        break;
+                    } else {
+                        cardQueue.enqueueCard(card.getId()); // Devolver la carta a la cola si no coincide
+                    }
                 }
             }
 
             if (!hasPlayed) {
-                Card newCard = deck.drawCard().dequeueCard();
-                currentPlayer.drawCard(new CardQueue(newCard));  // Suponiendo que CardQueue puede manejar un solo card
-                System.out.println(currentPlayer.getName() + " draws a card");
-                if (matches(topCard, newCard)) {
-                    currentPlayer.playCard(newCard.getId(), discardPile);
-                    System.out.println(currentPlayer.getName() + " plays " + newCard);
+                CardQueue newCardQueue = deck.drawCard(); // Dibuja una carta
+                if (newCardQueue != null) {
+                    Card newCard = newCardQueue.dequeueCard(); // Obtiene la carta de la cola
+                    currentPlayer.drawCard(newCardQueue); // El jugador toma la carta
+                    System.out.println(currentPlayer.getName() + " draws a card");
+                    if (matches(topCard, newCard)) {
+                        currentPlayer.playCard(newCard.getId(), discardPile);
+                        System.out.println(currentPlayer.getName() + " plays " + newCard);
+                    } else {
+                        System.out.println(currentPlayer.getName() + " passes");
+                    }
                 } else {
-                    System.out.println(currentPlayer.getName() + " passes");
+                    System.out.println("The deck is empty, cannot draw a card.");
                 }
             }
 
@@ -65,10 +74,11 @@ public class Game {
                 gameEnded = true;
             }
 
-            // Pasar al siguiente jugador
             currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
         }
     }
+
+
 
     private boolean matches(Card card1, Card card2) {
         return card1.getColor().equals(card2.getColor()) || card1.getValue().equals(card2.getValue()) || card1.getType().equals(card2.getType());
@@ -124,6 +134,4 @@ public class Game {
         this.gameEnded = true;
         System.out.println("El juego ha terminado.");
     }
-
 }
-

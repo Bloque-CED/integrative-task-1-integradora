@@ -31,10 +31,14 @@ public class Deck {
     public CardQueue drawCard() {
         if (!cards.isEmpty()) {
             int cardId = cards.pop();
-            return cardRegistry.getCard(cardId);
+            CardQueue cardQueue = new CardQueue(cardRegistry);
+            cardQueue.enqueueCard(cardId);
+            return cardQueue;
         }
         return null;
     }
+
+
 
     public void shuffle() {
         Collections.shuffle((List<?>) cards);//Shuffle no sirve para Stack, castea y vuelve un arraylist.
