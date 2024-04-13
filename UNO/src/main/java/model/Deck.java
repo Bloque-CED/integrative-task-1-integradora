@@ -49,20 +49,20 @@ public class Deck {
         if (id >= 28 && id <= 54) return "Green";
         if (id >= 55 && id <= 81) return "Blue";
         if (id >= 82 && id <= 108) return "Yellow";
-        return "None"; // Fallback, shouldn't happen
+        return "None";
     }
 
     private String determineValue(int id) {
-        int baseId = (id - 1) % 27; // Normalize ID within its color group
-        if (baseId == 0) return "0"; // Only one zero per color
-        int num = (baseId - 1) % 13 + 1; // Number sequence 1-9 twice
-        if (num > 9) return "Special"; // This encompasses IDs for Skip, Reverse, Draw Two
+        int baseId = (id - 1) % 27;
+        if (baseId == 0) return "0";
+        int num = (baseId - 1) % 13 + 1;
+        if (num > 9) return "Special";
         return String.valueOf(num);
     }
 
     private String determineType(int id) {
         int baseId = (id - 1) % 27;
-        if (baseId >= 19) return "Special"; // Assuming last 8 cards are special within each color segment
+        if (baseId >= 19) return "Special";
         return "Normal";
     }
 }
