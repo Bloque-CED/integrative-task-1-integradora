@@ -58,7 +58,7 @@ public class GameUI {
     }
 
     private void handleDrawCard(Player currentPlayer, Card topCard) {
-        Card drawnCard = game.getDeck().drawCard().dequeueCard();
+        Card drawnCard = game.getDeck().drawCard();
         currentPlayer.drawCard(drawnCard);
         System.out.println("Has robado: " + drawnCard);
         if (drawnCard.matches(topCard)) {

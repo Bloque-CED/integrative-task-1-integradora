@@ -3,7 +3,6 @@ package model;
 import exception.NodeNotFoundException;
 
 import java.util.function.Function;
-import java.util.function.Consumer;
 
 public class DoublyLinkedList<T extends Comparable<T>> {
 
@@ -129,18 +128,6 @@ public class DoublyLinkedList<T extends Comparable<T>> {
         size++;
     }
 
-    public String modifyDataNode(Function<T, ?> mapper, Object target, Consumer<T> modifier) {
-        try {
-            Node<T> modifyNode = searchNode(mapper, target);
-            if (modifyNode != null) {
-                modifier.accept(modifyNode.getData());
-                return ("Successfully modified!");
-            }
-        } catch (NodeNotFoundException e) {
-            return ("Error: " + e.getMessage());
-        }
-        return "Error: Node not found";
-    }
 
     public boolean isEmpty() {
         return size == 0;

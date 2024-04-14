@@ -30,7 +30,7 @@ public class DeckTest {
         // Draw all cards to verify they can be drawn and are distinct
         Set<Integer> drawnCardIds = new HashSet<>();
         for (int i = 0; i < 108; i++) {
-            Card card = deck.drawCard().dequeueCard();
+            Card card = deck.drawCard();
             assertNotNull("Card should not be null when drawn", card);
             assertTrue("Card IDs should be unique", drawnCardIds.add(card.getId()));
         }
@@ -39,7 +39,7 @@ public class DeckTest {
     }
     @Test
     public void testDrawCard() {
-        Card drawnCard = deck.drawCard().dequeueCard();
+        Card drawnCard = deck.drawCard();
         assertNotNull("Drawn card should not be null", drawnCard);
         assertEquals("Drawn card should have the correct ID", 108, drawnCard.getId());  // Assuming the last card is drawn first
     }

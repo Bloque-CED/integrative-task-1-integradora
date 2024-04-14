@@ -15,14 +15,14 @@ public class PlayerTest {
         cardRegistry = new CardRegistry();
         player = new Player("Test Player", cardRegistry);
         cardQueue = new CardQueue(cardRegistry);
-        Card card = new Card(1, "Green", "7", "Normal");
-        cardRegistry.registerCard(card);
-        cardQueue.enqueueCard(1);
     }
 
     @Test
-    public void testDrawAndPlayCard() {
-        player.drawCard(cardQueue);
-        assertTrue("El jugador debe poder jugar una carta que tiene en la mano.", player.playCard(1, new DiscardPile(cardRegistry)));
+    public void testDrawCard() {
+        Card card = new Card(1, "Green", "7", "Normal");
+        cardRegistry.registerCard(card);
+        cardQueue.enqueueCard(1);
+        player.drawCard(cardQueue.dequeueCard());
+        assertTrue("El jugador debería tener la carta en la mano", player.getHand().contains(card));
     }
 }

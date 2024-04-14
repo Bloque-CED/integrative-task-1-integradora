@@ -26,7 +26,7 @@ public class Game {
         }
 
         // Colocar la carta inicial en el montón de descarte
-        Card initialCard = deck.drawCard().dequeueCard();
+        Card initialCard = deck.drawCard();
         discardPile.addCard(initialCard.getId());
 
         currentPlayerIndex = 0;  // Comienza el juego con el primer jugador
@@ -49,8 +49,8 @@ public class Game {
             }
 
             if (!hasPlayed) {
-                Card newCard = deck.drawCard().dequeueCard();
-                currentPlayer.drawCard(new CardQueue(newCard));  // Suponiendo que CardQueue puede manejar un solo card
+                Card newCard = deck.drawCard();
+                currentPlayer.drawCard(newCard);  // Suponiendo que CardQueue puede manejar un solo card
                 System.out.println(currentPlayer.getName() + " draws a card");
                 if (matches(topCard, newCard)) {
                     currentPlayer.playCard(newCard.getId(), discardPile);
@@ -109,7 +109,7 @@ public class Game {
     public boolean isGameOver() {
         for (Player player : players) {
             if (player.getHand().isEmpty()) {
-                System.out.println(player.getName() + " ha ganado el juego!");
+                System.out.println(player.getName() + " hhas won the game!");
                 return true;
             }
         }
@@ -122,7 +122,7 @@ public class Game {
 
     public void endGame() {
         this.gameEnded = true;
-        System.out.println("El juego ha terminado.");
+        System.out.println("The game has ended.");
     }
 
 }

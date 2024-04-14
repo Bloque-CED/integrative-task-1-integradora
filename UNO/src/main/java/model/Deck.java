@@ -4,23 +4,30 @@ import java.util.Collections;
 import java.util.List;
 
 public class Deck {
-    ShufflableStack<Integer> cards = new ShufflableStack<>();
+    public ShufflableStack<Card> cards = new ShufflableStack<>();
+    PriorityQueue<Card> specialCards = new PriorityQueue<>();
     private CardRegistry cardRegistry;
 
     public Deck(CardRegistry cardRegistry) {
         this.cardRegistry = cardRegistry;
         this.cards = new ShufflableStack<>();
+        this.specialCards = new PriorityQueue<>();
         initializeDeck();
     }
 
+
     private void initializeDeck() {
-        // Suppose card IDs range from 1 to 108
         for (int id = 1; id <= 108; id++) {
-            cards.push(id);
-            cardRegistry.registerCard(new Card(id, determineColor(id), determineValue(id), determineType(id)));
+            Card card = new Card(id, determineColor(id), determineValue(id), determineType(id));
+            cards.push(card);
+            cardRegistry.registerCard(card);
+            if (card.getType().equals("Special")) {
+                specialCards.enqueue(card);
+            }
         }
         cards.shuffle();
     }
+
 
     private int registerCard(int id, String color, String value, String type) {
         Card card = new Card(id, color, value, type);
@@ -28,21 +35,21 @@ public class Deck {
         return id;
     }
 
-    public CardQueue drawCard() {
+    public Card drawCard() {
         if (!cards.isEmpty()) {
-            int cardId = cards.pop();
-            return cardRegistry.getCard(cardId);
+            return cards.pop();
         }
         return null;
     }
 
     public void shuffle() {
-        Collections.shuffle((List<?>) cards);//Shuffle no sirve para Stack, castea y vuelve un arraylist.
+        cards.shuffle();
     }
 
     public int getSize() {
         return cards.size();
     }
+
 
     private String determineColor(int id) {
         if (id >= 1 && id <= 27) return "Red";
@@ -52,6 +59,7 @@ public class Deck {
         return "None";
     }
 
+
     private String determineValue(int id) {
         int baseId = (id - 1) % 27;
         if (baseId == 0) return "0";
@@ -60,10 +68,15 @@ public class Deck {
         return String.valueOf(num);
     }
 
+
     private String determineType(int id) {
         int baseId = (id - 1) % 27;
         if (baseId >= 19) return "Special";
         return "Normal";
+    }
+
+    public PriorityQueue<Card> getSpecialCards() {
+        return specialCards;
     }
 }
 

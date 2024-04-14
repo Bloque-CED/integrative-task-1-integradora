@@ -1,6 +1,6 @@
 package model;
 
-public class Card {
+public class Card implements Comparable<Card>{
     private String color;
     private String value;
     private String type; // Normal or Special
@@ -50,4 +50,17 @@ public class Card {
                 this.value.equals(otherCard.getValue()) ||
                 this.type.equals(otherCard.getType());
     }
+
+    @Override
+    public int compareTo(Card otherCard) {
+        // We compare the cards first by color, then by value and finally by type
+        if (!this.color.equals(otherCard.getColor())) {
+            return this.color.compareTo(otherCard.getColor());
+        } else if (!this.value.equals(otherCard.getValue())) {
+            return this.value.compareTo(otherCard.getValue());
+        } else {
+            return this.type.compareTo(otherCard.getType());
+        }
+    }
+
 }

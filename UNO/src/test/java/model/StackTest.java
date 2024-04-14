@@ -51,6 +51,7 @@ public class StackTest<T>{
     }
     @Test
     void testPopEmptyStack() {
+        setUp();
         // Vaciar la pila
         stack.clear();
 

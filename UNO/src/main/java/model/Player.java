@@ -4,7 +4,7 @@ import java.util.List;
 
 // Player.java
 public class Player {
-    private List<Integer> hand = new ArrayList<>();
+    private List<Card> hand = new ArrayList<>();
     private String name;
     private CardRegistry cardRegistry;
 
@@ -15,9 +15,12 @@ public class Player {
 
     public void drawCard(Card card) {
         if (card != null) {
-            hand.add(card.getId());
+            hand.add(card);
         }
     }
+
+
+
 
     public boolean playCard(int cardId, DiscardPile discardPile) {
         if (hand.contains(cardId)) {
@@ -29,18 +32,15 @@ public class Player {
     }
 
     public List<Card> getHand() {
-        List<Card> cards = new ArrayList<>();
-        for (Integer id : hand) {
-            cards.add(cardRegistry.getCard(id));
-        }
-        return cards;
+        return hand;
     }
+
 
     public String getName() {
         return name;
     }
 
-    public void setHand(List<Integer> hand) {
+    public void setHand(List<Card> hand) {
         this.hand = hand;
     }
 

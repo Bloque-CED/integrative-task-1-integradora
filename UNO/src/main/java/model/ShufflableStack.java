@@ -5,7 +5,7 @@ import java.util.Random;
 import java.util.Collections;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+
 
 public class ShufflableStack<T> extends Stack<T> {
     private Random rand = new Random();
