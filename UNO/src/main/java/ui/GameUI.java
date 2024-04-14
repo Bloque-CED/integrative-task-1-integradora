@@ -14,7 +14,8 @@ public class GameUI {
     }
 
     public void start() {
-        while (!game.isGameOver()) {
+        boolean gameEnded = false; // Agregamos una variable para controlar el estado del juego
+        while (!gameEnded) { // Cambiamos la condición a gameEnded
             Player currentPlayer = game.getPlayers().get(game.getCurrentPlayerIndex());
             Card topCard = game.getDiscardPile().topCard();
 
@@ -24,8 +25,7 @@ public class GameUI {
 
             System.out.println("Elige una carta para jugar (1-" + currentPlayer.getHand().size() + ") o escribe 'robar' para sacar una carta del mazo:");
             String input = scanner.nextLine().trim();
-            processPlayerInput(input, currentPlayer, topCard);
-            game.nextPlayer(); // Actualiza el índice del jugador actual para el próximo turno
+            gameEnded = processPlayerInput(input, currentPlayer, topCard); // Actualizamos gameEnded con el resultado de processPlayerInput
         }
         scanner.close();
     }
@@ -34,11 +34,12 @@ public class GameUI {
         List<Card> hand = currentPlayer.getHand();
         System.out.println("Tus cartas:");
         for (int i = 0; i < hand.size(); i++) {
-            System.out.println((i + 1) + ". " + hand.get(i));
+            System.out.println((i + 1) + ". " + hand.get(i).toString());
         }
     }
 
-    private void processPlayerInput(String input, Player currentPlayer, Card topCard) {
+
+    private boolean processPlayerInput(String input, Player currentPlayer, Card topCard) {
         if (input.equalsIgnoreCase("robar")) {
             handleDrawCard(currentPlayer, topCard);
         } else {
@@ -55,7 +56,10 @@ public class GameUI {
                 game.setCurrentPlayerIndex(game.getCurrentPlayerIndex() - 1); // Mantiene el turno en el jugador actual.
             }
         }
+
+        return game.isGameOver(); // Devolvemos el estado del juego después de procesar la entrada del jugador
     }
+
 
     private void handleDrawCard(Player currentPlayer, Card topCard) {
         Card drawnCard = game.getDeck().drawCard();
@@ -79,10 +83,11 @@ public class GameUI {
                 game.endGame(); // Asume que se ha implementado este método para terminar el juego.
             }
         } else {
-            System.out.println("No puedes jugar esa carta, no coincide con la carta en la cima de la pila de descarte.");
-            game.setCurrentPlayerIndex(game.getCurrentPlayerIndex() - 1); // Mantiene el turno en el jugador actual.
+            // No juega la carta, dejamos que el jugador decida qué hacer en processPlayerInput()
         }
     }
+
+
 
     public static void main(String[] args) {
         GameUI ui = new GameUI();

@@ -120,11 +120,13 @@ public class Game {
         for (Player player : players) {
             if (player.getHand().isEmpty()) {
                 System.out.println(player.getName() + " has won the game!");
+                gameEnded = true;
                 return true;
             }
         }
         return false;
     }
+
 
     public void nextPlayer() {
         currentPlayerIndex = (currentPlayerIndex + 1) % players.size();

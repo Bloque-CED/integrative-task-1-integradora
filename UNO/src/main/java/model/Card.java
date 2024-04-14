@@ -62,5 +62,8 @@ public class Card implements Comparable<Card>{
             return this.type.compareTo(otherCard.getType());
         }
     }
-
+    @Override
+    public String toString() {
+        return color + " " + value + " (" + type + ")";
+    }
 }
