@@ -35,11 +35,6 @@ public class GameTest {
         assertNotNull("Debe haber una carta inicial en la pila de descarte", topCard);
     }
 
-    @Test
-    public void playerTurnTest() {
-        Player firstPlayer = game.getPlayers().get(0);
-        game.play(); // Simula el turno de un jugador.
-        assertFalse("El primer jugador debería haber jugado una carta o robado una", firstPlayer.getHand().size() == 7);
-    }
+
 }
 

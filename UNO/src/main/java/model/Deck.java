@@ -37,9 +37,10 @@ public class Deck {
 
     public Card drawCard() {
         if (!cards.isEmpty()) {
-            return cards.pop();
+            int cardId = cards.pop().getId();
+            return cardRegistry.getCard(cardId);
         }
-        return null;
+        return null; // Devolver null si el mazo está vacío
     }
 
     public void shuffle() {
@@ -77,6 +78,10 @@ public class Deck {
 
     public PriorityQueue<Card> getSpecialCards() {
         return specialCards;
+    }
+
+    public ShufflableStack<Card> getCards() {
+        return cards;
     }
 }
 

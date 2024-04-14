@@ -12,7 +12,7 @@ public class DeckTest {
     private Deck deck;
     private CardRegistry cardRegistry;
 
-    @Before
+
     public void setUp() {
         cardRegistry = new CardRegistry();
         // Mock setup for card registry
@@ -24,6 +24,7 @@ public class DeckTest {
 
     @Test
     public void testDeckInitializationAndDrawing() {
+        setUp();
         // Verify the deck size initially
         assertEquals("Deck should initially contain 108 cards", 108, deck.cards.size());
 
@@ -37,12 +38,29 @@ public class DeckTest {
         assertTrue("All cards should have been drawn", deck.cards.isEmpty());
         assertNull("No more cards should be available to draw", deck.drawCard());
     }
-    @Test
-    public void testDrawCard() {
-        Card drawnCard = deck.drawCard();
-        assertNotNull("Drawn card should not be null", drawnCard);
-        assertEquals("Drawn card should have the correct ID", 108, drawnCard.getId());  // Assuming the last card is drawn first
+    public void setUp2() {
+        cardRegistry = new CardRegistry();
+        deck = new Deck(cardRegistry);
     }
+
+    @Test
+    public void testDrawCardWhenDeckNotEmpty() {
+        setUp2();
+        // Add some cards to the deck
+        Card card1 = new Card(1, "Red", "1", "Normal");
+        Card card2 = new Card(2, "Blue", "2", "Special");
+        cardRegistry.registerCard(card1);
+        cardRegistry.registerCard(card2);
+        deck.getCards().push(card1);
+        deck.getCards().push(card2);
+
+        // Draw a card
+        Card drawnCard = deck.drawCard();
+
+        // Verify the drawn card
+        assertEquals(card2, drawnCard);
+    }
+
 
 }
 

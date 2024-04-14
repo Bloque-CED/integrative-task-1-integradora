@@ -2,7 +2,7 @@ package model;
 
 import java.util.List;
 import java.util.ArrayList;
-
+import model.CardQueue;
 
 public class Game {
     private Deck deck;
@@ -12,25 +12,31 @@ public class Game {
     private boolean gameEnded;
 
     public Game(int numPlayers, CardRegistry cardRegistry) {
-        this.deck = new Deck(cardRegistry);  // Inicializa el mazo de cartas
-        this.discardPile = new DiscardPile(cardRegistry);  // Inicializa el montón de descarte
+        this.deck = new Deck(cardRegistry);
+        this.discardPile = new DiscardPile(cardRegistry);
         this.players = new ArrayList<>();
 
-        // Inicializar jugadores y repartir cartas
         for (int i = 0; i < numPlayers; i++) {
             Player player = new Player("Player " + (i + 1), cardRegistry);
-            for (int j = 0; j < 7; j++) {  // Cada jugador recibe 7 cartas
-                player.drawCard(deck.drawCard());
+            for (int j = 0; j < 7; j++) {
+                Card drawnCard = deck.drawCard();
+                if (drawnCard != null) {
+                    player.drawCard(drawnCard);
+                }
             }
             players.add(player);
         }
 
-        // Colocar la carta inicial en el montón de descarte
+        // Colocar la carta inicial en el mazo de descarte
         Card initialCard = deck.drawCard();
-        discardPile.addCard(initialCard.getId());
+        if (initialCard != null) {
+            discardPile.addCard(initialCard.getId());
+        }
 
-        currentPlayerIndex = 0;  // Comienza el juego con el primer jugador
+        currentPlayerIndex = 0;
     }
+
+
 
     public void play() {
         boolean gameEnded = false;
@@ -39,6 +45,7 @@ public class Game {
             Card topCard = discardPile.topCard();
             boolean hasPlayed = false;
 
+            // Iterar sobre las cartas en la mano del jugador
             for (Card card : currentPlayer.getHand()) {
                 if (matches(topCard, card)) {
                     currentPlayer.playCard(card.getId(), discardPile);
@@ -49,14 +56,18 @@ public class Game {
             }
 
             if (!hasPlayed) {
-                Card newCard = deck.drawCard();
-                currentPlayer.drawCard(newCard);  // Suponiendo que CardQueue puede manejar un solo card
-                System.out.println(currentPlayer.getName() + " draws a card");
-                if (matches(topCard, newCard)) {
-                    currentPlayer.playCard(newCard.getId(), discardPile);
-                    System.out.println(currentPlayer.getName() + " plays " + newCard);
+                Card drawnCard = deck.drawCard();
+                if (drawnCard != null) {
+                    currentPlayer.drawCard(drawnCard);
+                    System.out.println(currentPlayer.getName() + " draws a card");
+                    if (matches(topCard, drawnCard)) {
+                        currentPlayer.playCard(drawnCard.getId(), discardPile);
+                        System.out.println(currentPlayer.getName() + " plays " + drawnCard);
+                    } else {
+                        System.out.println(currentPlayer.getName() + " passes");
+                    }
                 } else {
-                    System.out.println(currentPlayer.getName() + " passes");
+                    System.out.println("The deck is empty, cannot draw a card.");
                 }
             }
 
@@ -65,7 +76,6 @@ public class Game {
                 gameEnded = true;
             }
 
-            // Pasar al siguiente jugador
             currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
         }
     }
@@ -109,7 +119,7 @@ public class Game {
     public boolean isGameOver() {
         for (Player player : players) {
             if (player.getHand().isEmpty()) {
-                System.out.println(player.getName() + " hhas won the game!");
+                System.out.println(player.getName() + " has won the game!");
                 return true;
             }
         }
@@ -124,6 +134,4 @@ public class Game {
         this.gameEnded = true;
         System.out.println("The game has ended.");
     }
-
 }
-
